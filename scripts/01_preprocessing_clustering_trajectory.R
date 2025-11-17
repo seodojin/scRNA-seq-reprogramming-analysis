@@ -203,6 +203,13 @@ message("Cells after filtering Unknown: ", ncol(plus_filtered))
 message("\nCell type composition:")
 print(table(plus_filtered$customclassif))
 
+# Save preprocessed object for downstream analysis
+saveRDS(plus_filtered, "data/seurat_preprocessed.rds")
+message("\n=== CHECKPOINT 1: Saved seurat_preprocessed.rds ===")
+message("Purpose: Gene set analysis (SynGO, pathway analysis)")
+message("Content: ", nrow(plus_filtered), " genes × ", ncol(plus_filtered), " cells")
+message("Cell types: ", paste(names(table(plus_filtered$customclassif)), collapse=", "))
+
 # ============================================================================
 # Convert to SingleCellExperiment
 # ============================================================================
@@ -387,13 +394,16 @@ message("\n--- Saving results ---")
 
 saveRDS(sce_final, "data/sce_trajectory.rds")
 
-message("✓ Saved: data/sce_trajectory.rds")
-message("  This object contains:")
-message("    - Gene expression counts")
-message("    - Cell type annotations")
-message("    - Trajectory pseudotime (curve1)")
-message("    - Primary lineage assignments")
-message("    - Ready for Countsplit DEG analysis")
+message("\n=== CHECKPOINT 2: Saved sce_trajectory.rds ===")
+message("Purpose: Trajectory inference (Slingshot, tradeSeq)")
+message("Content: ", nrow(sce_final), " genes × ", ncol(sce_final), " cells")
+message("Note: Subset to highly variable genes for trajectory analysis")
+message("\nThis object contains:")
+message("  - Gene expression counts")
+message("  - Cell type annotations")
+message("  - Trajectory pseudotime (curve1)")
+message("  - Primary lineage assignments")
+message("  - Ready for Countsplit DEG analysis")
 
 message("\n=== Pipeline completed successfully! ===")
 message("Next step: Run 02_DEG_countsplit.R")

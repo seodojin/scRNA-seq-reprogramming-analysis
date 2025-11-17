@@ -181,6 +181,8 @@ expr_wide <- pred_expr_tidy %>%
     time_point = paste0(lineage_label, "_", time_rounded)
   ) %>%
   dplyr::select(gene, time_point, yhat) %>%
+  group_by(gene, time_point) %>%
+  summarise(yhat = mean(yhat, na.rm = TRUE), .groups = "drop") %>%
   pivot_wider(names_from = time_point, values_from = yhat) %>%
   column_to_rownames("gene") %>%
   as.matrix()

@@ -31,8 +31,8 @@ message("=== SynGO AUCell Analysis with Countsplit ===\n")
 message("=== PART 1: Data Preparation ===\n")
 
 # Load trajectory data
-sce_final <- readRDS("data/sce_trajectory.rds")
-message("Loaded SingleCellExperiment: ", ncol(sce_final), " cells")
+sce_final <- readRDS("data/seurat_preprocessed.rds")
+message("Loaded: ", nrow(seurat_obj), " genes × ", ncol(seurat_obj), " cells")
 
 # Convert to Seurat if needed for easier manipulation
 seurat_obj <- as.Seurat(sce_final, data = NULL)
@@ -40,8 +40,8 @@ seurat_obj <- as.Seurat(sce_final, data = NULL)
 # Define cell groups (Neurons, Immature neurons, Myofibroblasts)
 message("\nDefining cell groups...")
 
-cell_types <- seurat_obj$celltype_merged
-is_neuron <- cell_types %in% c("Neurons")
+cell_types <- seurat_obj$customclassif
+is_neuron <- cell_types %in% c("GABAergic neurons", "Glutamatergic neurons")
 is_imm <- cell_types %in% c("Immature neurons")
 is_myo <- cell_types %in% c("Myofibroblasts")
 
