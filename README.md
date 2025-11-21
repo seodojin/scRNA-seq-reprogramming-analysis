@@ -4,62 +4,49 @@ Analysis pipeline for PTBP1 knockdown-mediated direct neuronal reprogramming in 
 
 **Data Availability:** NCBI BioProject [PRJNA1256192](https://www.ncbi.nlm.nih.gov/bioproject/PRJNA1256192)
 
-## Repository Structure
+## Analysis Summary
 
-```
-scRNA-seq-reprogramming-analysis/
-├── scripts/
-│   ├── utils/                                      # ScType helper functions
-│   ├── 01_preprocessing_clustering_trajectory.R    # QC, clustering, trajectory
-│   ├── 02_DEG_countsplit.R                         # DEG with Countsplit validation
-│   ├── 03_SynGO_analysis.R                         # Synaptic gene enrichment
-│   └── 04_figures.R                                # Heatmap, dotplots, TF plots
-└── data/
-    ├── ScTypeDB_full.xlsx                          # Cell type database
-    ├── syngo_annotations.xlsx                      # SynGO gene sets
-    └── sce_trajectory.rds                          # Preprocessed data (8.4 MB)
-```
+### 1. QC & Clustering
 
-## Analysis Pipeline
+-   BD Rhapsody WTA pipeline → count matrix\
+-   Filtered cells:
+    -   **1,000–4,000 features**
+    -   **\<20% MT genes**
+-   Final dataset: **9,971 cells**
+-   PCA → SNN clustering (resolution 0.2) → UMAP
 
-### 1. Preprocessing & Trajectory (Script 01)
-- Quality control, normalization
-- ScType cell type annotation
-- Slingshot trajectory inference
-- **Output:** `sce_trajectory.rds`
+### 2. Cell Type Annotation
 
-**Note:** Requires raw data from NCBI (PRJNA1256192). Reviewers can skip and use provided `sce_trajectory.rds`.
+-   Automated annotation using **ScType**\
+-   Major populations:
+    -   Fibroblasts\
+    -   Myofibroblasts\
+    -   Immature neurons\
+    -   Neurons (GABAergic + Glutamatergic)
 
-### 2. Differential Expression (Script 02)
-- tradeSeq patternTest (mature vs immature lineages)
-- Countsplit validation (Split A selection → Split B testing)
-- Transcription factor identification
-- **Output:** Validated gene lists and TF annotations
+### 3. Trajectory Inference
 
-### 3. SynGO Enrichment (Script 03)
-- AUCell scoring on synaptic gene sets
-- Countsplit validation across cell types
-- **Output:** Validated SynGO terms, volcano plot
+-   Converted to **SingleCellExperiment**
+-   Slingshot on UMAP embeddings\
+-   Root: Fibroblasts\
+-   Terminal: Neurons / Immature neurons / Myofibroblasts
 
-### 4. Publication Figures (Script 04)
-- Gene expression heatmap
-- GO/KEGG enrichment dotplots
-- Transcription factor smoothers
-- **Output:** All figures in SVG format
+### 4. Countsplit Differential Expression (tradeSeq)
 
-## Results Summary
+-   Raw counts split into **Split A / Split B** (Binomial p=0.5)\
+-   **Path 1:** Trajectory on A → DE on B\
+-   **Path 2:** Trajectory on B → DE on A\
+-   Final DE genes = intersection\
+-   Used `patternTest` (FDR \< 0.05)
 
-**Cell composition (3,702 cells):**
-- Fibroblasts: 188 (5.1%)
-- Immature neurons: 1,657 (44.8%)
-- Myofibroblasts: 1,213 (32.8%)
-- Mature neurons: 644 (17.4%)
+### 5. SynGO AUCell Analysis
 
-**Validated findings (FDR < 0.05):**
-- Differential expression genes validated through Countsplit
-- Key transcription factors: CEBPB, EGR1, PBX3
-- Synaptic gene ontology enrichment patterns
+-   72 non-redundant SynGO terms\
+-   AUCell scoring performed **only on the validation split**\
+-   Bidirectional Countsplit (A→B, B→A)
 
-## Contact
+### 6. Transcription Factor Analysis
 
-Dojin Seo
+-   DoRothEA levels A–C\
+-   Validated TFs include:
+    -   **CEBPB, EGR1, PBX3, HMGA1, JUND, FOSL1**
