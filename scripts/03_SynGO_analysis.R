@@ -1,5 +1,4 @@
 # ============================================================================
-# 03_SynGO_analysis.R
 # Description: SynGO synaptic gene enrichment with Countsplit cross-validation
 #              - Implements rigorous two-fold cross-validation
 #              - Split A → Select genes | Split B → Validate enrichment
