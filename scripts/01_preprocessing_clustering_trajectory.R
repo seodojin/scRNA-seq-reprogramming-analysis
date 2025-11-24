@@ -271,7 +271,7 @@ Idents(plus) <- plus@meta.data$customclassif
 vln_plot2 <- VlnPlot(
   object = subset(plus, cells = shPTBP1_cells),
   features = "PTBP1",
-  group.by = "updated_customclassif",
+  group.by = "customclassif",
   pt.size = 0,
   cols = c("#19c3a3", "#ff8c8c", "#00bef3", "#d4a600")
 ) +
